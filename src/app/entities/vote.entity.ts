@@ -1,4 +1,4 @@
-import {Column, Entity, OneToMany, PrimaryGeneratedColumn, Unique} from 'typeorm';
+import {Column, Entity, Index, OneToMany, PrimaryGeneratedColumn, Unique} from 'typeorm';
 import {ProcessSteps} from '../enums/process-steps.enum';
 import {Post} from './post.entity';
 import {Nullable} from "../types/nullable.type";
@@ -10,9 +10,11 @@ export class Vote {
   id!: number;
 
   @Column()
+  @Index()
   uid!: string;
 
   @Column()
+  @Index()
   number!: number;
 
   @Column()

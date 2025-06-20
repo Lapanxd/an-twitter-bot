@@ -3,9 +3,9 @@ import path from 'path';
 import axios from 'axios';
 import unzipper from 'unzipper';
 import logger from '../../utils/logger';
-import { Repository } from 'typeorm';
-import { Vote } from '../entities/vote.entity';
-import { voteRepository } from '../container';
+import {Repository} from 'typeorm';
+import {Vote} from '../entities/vote.entity';
+import {voteRepository} from '../container';
 
 export class FetchVotesUseCase {
   static #instance: FetchVotesUseCase;
@@ -14,7 +14,8 @@ export class FetchVotesUseCase {
     'http://data.assemblee-nationale.fr/static/openData/repository/17/loi/scrutins/Scrutins.json.zip';
   private readonly outputDir = path.resolve(process.cwd(), 'src/data/scrutins');
 
-  private constructor(private readonly voteRepository: Repository<Vote>) {}
+  private constructor(private readonly voteRepository: Repository<Vote>) {
+  }
 
   static get instance(): FetchVotesUseCase {
     if (!FetchVotesUseCase.#instance) {
@@ -28,7 +29,7 @@ export class FetchVotesUseCase {
 
     const lastVote = await this.voteRepository.findOne({
       where: {},
-      order: { id: 'DESC' },
+      order: {number: 'DESC'},
     });
 
     if (lastVote) {
@@ -61,7 +62,7 @@ export class FetchVotesUseCase {
   }
 
   private async createOutputDir(): Promise<void> {
-    fs.mkdirSync(this.outputDir, { recursive: true });
+    fs.mkdirSync(this.outputDir, {recursive: true});
     logger.info(`Output directory ensured at ${this.outputDir}`);
   }
 
@@ -71,7 +72,7 @@ export class FetchVotesUseCase {
 
     const response = await axios.get(this.jsonZipUrl, {
       responseType: 'stream',
-      headers: { 'User-Agent': 'Mozilla/5.0 (compatible; FetchVotesUseCase/1.0)' },
+      headers: {'User-Agent': 'Mozilla/5.0 (compatible; FetchVotesUseCase/1.0)'},
     });
 
     const writer = fs.createWriteStream(zipPath);
@@ -90,7 +91,7 @@ export class FetchVotesUseCase {
     logger.info(`Extracting ZIP file: ${zipPath}`);
     await fs
       .createReadStream(zipPath)
-      .pipe(unzipper.Extract({ path: this.outputDir }))
+      .pipe(unzipper.Extract({path: this.outputDir}))
       .promise();
     logger.info(`Extraction complete to ${this.outputDir}`);
   }

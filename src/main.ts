@@ -1,6 +1,6 @@
 import {AppDataSource} from './data-source';
 import logger from './utils/logger';
-import {generateChatGptVoteResumeUseCase} from './app/container';
+import {extractDownloadedVotesUseCase, fetchVotesUseCase} from "./app/container";
 
 async function bootstrap() {
   await AppDataSource.initialize();
@@ -16,7 +16,11 @@ async function bootstrap() {
     logger.error('Unhandled Rejection:', reason);
   });
 
-  await generateChatGptVoteResumeUseCase.execute(2631);
+  // await generateChatGptVoteResumeUseCase.execute(2631);
+
+  await fetchVotesUseCase.execute();
+
+  await extractDownloadedVotesUseCase.execute();
 }
 
 void bootstrap();

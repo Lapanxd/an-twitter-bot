@@ -1,12 +1,13 @@
 import fs from 'fs';
 import path from 'path';
-import { VoteType } from '../types/vote.type';
-import { Vote } from '../entities/vote.entity';
-import { Repository } from 'typeorm';
-import { voteRepository } from '../container';
+import {VoteType} from '../types/vote.type';
+import {Vote} from '../entities/vote.entity';
+import {Repository} from 'typeorm';
+import {voteRepository} from '../container';
 import logger from '../../utils/logger';
-import { parseIsoDate } from '../../utils/helpers/date-fns.helper';
-import { ProcessSteps } from '../enums/process-steps.enum';
+import {parseIsoDate} from '../../utils/helpers/date-fns.helper';
+import {ProcessSteps} from '../enums/process-steps.enum';
+import {sleep} from "../../utils/helpers/sleep.helper";
 
 export class ExtractDownloadedVotesUseCase {
   static #instance: ExtractDownloadedVotesUseCase;
@@ -24,6 +25,8 @@ export class ExtractDownloadedVotesUseCase {
   }
 
   async execute(): Promise<void> {
+    await sleep(3000);
+
     const files = fs.readdirSync(this.inputDir).filter((f) => f.endsWith('.json'));
 
     for (const file of files) {
@@ -45,7 +48,7 @@ export class ExtractDownloadedVotesUseCase {
   private async processFile(json: VoteType): Promise<void> {
     const uid = json.scrutin.uid;
 
-    const existingVote = await this.voteRepository.findOneBy({ uid });
+    const existingVote = await this.voteRepository.findOneBy({uid});
 
     if (existingVote) {
       logger.info(`Vote with uid ${uid} already exists, skipping insert.`);
@@ -57,7 +60,7 @@ export class ExtractDownloadedVotesUseCase {
     const vote = new Vote();
     vote.uid = json.scrutin.uid;
     vote.number = Number(json.scrutin.numero);
-    vote.applicant = json.scrutin.demandeur.texte;
+    vote.applicant = json.scrutin.demandeur.texte ?? '';
     vote.amendments = extractedAmendments;
     vote.subject = json.scrutin.objet.libelle;
     vote.totalVotes = Number(json.scrutin.syntheseVote.suffragesExprimes);
