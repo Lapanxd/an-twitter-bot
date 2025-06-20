@@ -8,14 +8,14 @@ const logger = createLogger({
     format.splat(),
     format.colorize(),
     format.printf(({ timestamp, level, message, stack }) => {
-      return stack
-        ? `${timestamp} [${level}]: ${message} - ${stack}`
-        : `${timestamp} [${level}]: ${message}`;
+      if (stack && typeof stack === 'string') {
+        return `${timestamp} [${level}]: ${stack}`;
+      }
+      const msg = String(message);
+      return `${timestamp} [${level}]: ${msg}`;
     }),
   ),
-  transports: [
-    new transports.Console(),
-  ],
+  transports: [new transports.Console()],
 });
 
 export default logger;
