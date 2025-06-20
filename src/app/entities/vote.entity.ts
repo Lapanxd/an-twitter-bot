@@ -2,6 +2,8 @@ import {Column, Entity, Index, OneToMany, PrimaryGeneratedColumn, Unique} from '
 import {ProcessSteps} from '../enums/process-steps.enum';
 import {Post} from './post.entity';
 import {Nullable} from "../types/nullable.type";
+import {PoliticalThemesEnum} from "../enums/political-themes.enum";
+import {AmendmentImportance} from "../enums/amendment-importance.enum";
 
 @Entity()
 @Unique(['uid'])
@@ -47,6 +49,20 @@ export class Vote {
     default: ProcessSteps.DOWNLOADED,
   })
   status!: ProcessSteps;
+
+  // Change type to Enum if we migrate from SQLite to Postgres or MySQL
+  @Column({
+    type: 'text',
+    nullable: true
+  })
+  politicalTheme!: Nullable<PoliticalThemesEnum>;
+
+  // Change type to Enum if we migrate from SQLite to Postgres or MySQL
+  @Column({
+    type: 'text',
+    nullable: true
+  })
+  amendmentImportance!: Nullable<AmendmentImportance>;
 
   @Column('text', {nullable: true})
   chatGPTResume!: Nullable<string>;

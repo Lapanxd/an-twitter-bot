@@ -1,0 +1,1 @@
+import './fetch-votes.cron';

@@ -1,5 +1,6 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { Vote } from './vote.entity';
+import {Column, Entity, ManyToOne, PrimaryGeneratedColumn} from 'typeorm';
+import {Vote} from './vote.entity';
+import {Nullable} from "../types/nullable.type";
 
 @Entity()
 export class Post {
@@ -9,12 +10,14 @@ export class Post {
   @Column()
   text!: string;
 
-  @Column({ default: false })
+  @Column({default: false})
   posted!: boolean;
 
-  @Column({ nullable: true })
+  parentPostId!: Nullable<number>;
+
+  @Column({nullable: true})
   tweetId!: string;
 
-  @ManyToOne(() => Vote, (vote) => vote.posts, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Vote, (vote) => vote.posts, {onDelete: 'CASCADE'})
   vote!: Vote[];
 }

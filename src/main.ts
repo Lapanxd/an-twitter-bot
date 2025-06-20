@@ -1,6 +1,9 @@
 import {AppDataSource} from './data-source';
 import logger from './utils/logger';
-import {extractDownloadedVotesUseCase, fetchVotesUseCase} from "./app/container";
+
+// Start cron jobs
+import './app/cron'
+import {generateChatGptVoteResumeUseCase} from "./app/container";
 
 async function bootstrap() {
   await AppDataSource.initialize();
@@ -16,11 +19,11 @@ async function bootstrap() {
     logger.error('Unhandled Rejection:', reason);
   });
 
-  // await generateChatGptVoteResumeUseCase.execute(2631);
+  await generateChatGptVoteResumeUseCase.execute(997);
 
-  await fetchVotesUseCase.execute();
-
-  await extractDownloadedVotesUseCase.execute();
+  // await fetchVotesUseCase.execute();
+  //
+  // await extractDownloadedVotesUseCase.execute();
 }
 
 void bootstrap();

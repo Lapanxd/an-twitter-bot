@@ -7,7 +7,6 @@ import {voteRepository} from '../container';
 import logger from '../../utils/logger';
 import {parseIsoDate} from '../../utils/helpers/date-fns.helper';
 import {ProcessSteps} from '../enums/process-steps.enum';
-import {sleep} from "../../utils/helpers/sleep.helper";
 
 export class ExtractDownloadedVotesUseCase {
   static #instance: ExtractDownloadedVotesUseCase;
@@ -25,8 +24,6 @@ export class ExtractDownloadedVotesUseCase {
   }
 
   async execute(): Promise<void> {
-    await sleep(3000);
-
     const files = fs.readdirSync(this.inputDir).filter((f) => f.endsWith('.json'));
 
     for (const file of files) {
