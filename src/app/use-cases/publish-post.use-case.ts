@@ -10,7 +10,8 @@ export class PublishPostUseCase {
   private constructor(
     private readonly client: TwitterApi,
     private readonly tweetRepository: Repository<Post>,
-  ) {}
+  ) {
+  }
 
   public static get instance(): PublishPostUseCase {
     if (!PublishPostUseCase.#instance) {
@@ -24,8 +25,7 @@ export class PublishPostUseCase {
     const post = await postRepository.findOne({ where: { id: postId } });
 
     if (!post) {
-      logger.error(`Tweet with id ${postId} not found`);
-      return;
+      throw new Error(`Tweet with id ${postId} not found.`);
     }
 
     const result = await this.client.v2.tweet(post.text);

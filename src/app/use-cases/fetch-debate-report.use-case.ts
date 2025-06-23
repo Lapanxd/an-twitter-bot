@@ -16,7 +16,8 @@ export class FetchDebateReportsUseCase {
   private readonly filename = 'CRSANR5L17S2025O1N';
   private readonly extension = 'xml';
 
-  private constructor(private readonly debateReportRepository: Repository<DebateReport>) {}
+  private constructor(private readonly debateReportRepository: Repository<DebateReport>) {
+  }
 
   public static get instance(): FetchDebateReportsUseCase {
     if (!FetchDebateReportsUseCase.#instance) {
@@ -31,13 +32,11 @@ export class FetchDebateReportsUseCase {
     const response = await fetch(url);
 
     if (response.status === 404) {
-      logger.error(`Assembly debate report with id : ${assemblyId} not found.`);
-      return;
+      throw new Error(`Assembly debate report with id : ${assemblyId} not found.`);
     }
 
     if (!response.ok) {
-      logger.error(`Error for : ${url}: ${response.statusText}`);
-      return;
+      throw new Error(`Error for : ${url}: ${response.statusText}`);
     }
 
     const xmlContent = await response.text();
@@ -45,8 +44,7 @@ export class FetchDebateReportsUseCase {
     const extractedDateStr = await this.getSeanceDate(xmlContent);
 
     if (!extractedDateStr) {
-      logger.error(`No date found in the debate report for assembly id: ${assemblyId}`);
-      return;
+      throw new Error(`No date found in the debate report for assembly id: ${assemblyId}`);
     }
 
     const sessionDate = parseDateFromFrenchLabel(extractedDateStr);

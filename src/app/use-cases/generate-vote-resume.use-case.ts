@@ -29,13 +29,11 @@ export class GenerateChatGPTVoteResumeUseCase {
     const vote = await this.voteRepository.findOneBy({ number: voteNumber });
 
     if (!vote) {
-      logger.error(`Vote with id : ${voteNumber} not found.`);
-      return;
+      throw new Error(`Vote with id : ${voteNumber} not found.`);
     }
 
     if (vote.chatGPTResume && vote.politicalTheme && vote.amendmentImportance && vote.amendments.length === 1) {
-      logger.info('Vote with id : ' + voteNumber + ' already has a chatGPT resume and political theme.');
-      return;
+      throw new Error(`Should not process vote with number : ${voteNumber}. Already has a chatGPT resume and political theme`);
     }
 
     const completeAmendmentNumber = vote.amendments?.map((amendment) =>
@@ -47,8 +45,7 @@ export class GenerateChatGPTVoteResumeUseCase {
     );
 
     if (!amendmentUrls?.length) {
-      logger.error(`Amendments url not found for vote with id : ${voteNumber}`);
-      return;
+      throw new Error(`Amendments url not found for vote with id : ${voteNumber}`);
     }
 
     const jsonAmendments = await Promise.all(
@@ -97,8 +94,7 @@ Commence chaque point par un émoji différent pertinent, suivi du texte. Ne dé
     const amendmentThemeChosen = await this.generateAmendmentTheme(jsonAmendments);
 
     if (!amendmentThemeChosen) {
-      logger.warn(`No theme generated for vote with id : ${voteNumber}`);
-      return;
+      throw new Error(`No theme generated for vote with id : ${voteNumber}`);
     }
 
     if (Object.keys(PoliticalThemesEnum).includes(amendmentThemeChosen as PoliticalThemesEnum)) {
@@ -113,8 +109,7 @@ Commence chaque point par un émoji différent pertinent, suivi du texte. Ne dé
     const amendmentImportanceChosen = await this.generatedAmendmentImportance(jsonAmendments);
 
     if (!amendmentImportanceChosen) {
-      logger.warn(`No importance generated for vote with id : ${voteNumber}`);
-      return;
+      throw new Error(`No importance generated for vote with id : ${voteNumber}`);
     }
 
     if (

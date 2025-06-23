@@ -28,8 +28,7 @@ export class GenerateAmendmentPostUseCase {
     const vote = await this.voteRepository.findOne({ where: { number: voteNumber } });
 
     if (!vote) {
-      logger.error('Vote not found for Number:', voteNumber);
-      return;
+      throw new Error(`Vote not found for Number ${voteNumber}`);
     }
 
     const amendmentApproved = vote.yesVotes > vote.noVotes + vote.abstentions ? `ADOPTÉ` : `REJETÉ`;
