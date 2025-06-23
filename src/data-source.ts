@@ -9,5 +9,6 @@ export const AppDataSource = new DataSource({
   synchronize: false,
   logging: false,
   entities: [Post, Vote],
+  migrationsRun: false,
   migrations: ['src/migrations/*.ts'],
 });
