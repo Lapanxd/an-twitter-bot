@@ -17,22 +17,6 @@
   "author": "",
   "license": "ISC",
   "description": "",
-  "devDependencies": {
-    "@commitlint/cli": "^19.8.1",
-    "@commitlint/config-conventional": "^19.8.1",
-    "@types/node": "^24.0.3",
-    "@types/unzipper": "^0.10.11",
-    "@types/winston": "^2.4.4",
-    "@types/xml2js": "^0.4.14",
-    "@typescript-eslint/eslint-plugin": "^8.34.1",
-    "@typescript-eslint/parser": "^8.34.1",
-    "eslint": "^9.29.0",
-    "eslint-config-prettier": "^10.1.5",
-    "eslint-plugin-prettier": "^5.5.0",
-    "husky": "^8.0.0",
-    "ts-node-dev": "^2.0.0",
-    "typeorm": "^0.3.24"
-  },
   "dependencies": {
     "@fastify/cors": "^11.0.1",
     "axios": "^1.10.0",
@@ -53,5 +37,16 @@
     "@types/unzipper": "^0.10.11",
     "@types/winston": "^2.4.4",
     "@types/xml2js": "^0.4.14"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.8.1",
+    "@commitlint/config-conventional": "^19.8.1",
+    "@typescript-eslint/eslint-plugin": "^8.34.1",
+    "@typescript-eslint/parser": "^8.34.1",
+    "eslint": "^9.29.0",
+    "eslint-config-prettier": "^10.1.5",
+    "eslint-plugin-prettier": "^5.5.0",
+    "husky": "^8.0.0",
+    "ts-node-dev": "^2.0.0"
   }
 }
