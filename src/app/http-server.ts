@@ -14,6 +14,10 @@ export async function startServer() {
     return await postRepository.find();
   });
 
-  await fastify.listen({ port: 3002 });
-  console.log('Server started on http://localhost:3002');
+  const port = parseInt(process.env.PORT || '3002', 10);
+  const host = process.env.HOST || '0.0.0.0';
+
+  fastify.listen({ port, host }, () => {
+    console.log(`Server started on http://${host}:${port}`);
+  });
 }
