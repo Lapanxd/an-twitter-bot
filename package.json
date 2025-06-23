@@ -8,7 +8,6 @@
     "start:dev": "ts-node-dev --respawn --transpile-only --clear src/main.ts",
     "format": "prettier --write \"src/**/*.{ts,js,json,md,html}\"",
     "postinstall": "npm run build",
-    "prepare": "husky install",
     "migration:generate": "ts-node --esm ./node_modules/typeorm/cli.js migration:generate -d src/data-source.ts src/migrations/migration",
     "migration:run": "ts-node --esm ./node_modules/typeorm/cli.js migration:run -d src/data-source.ts",
     "migration:revert": "ts-node --esm ./node_modules/typeorm/cli.js migration:revert -d src/data-source.ts"
