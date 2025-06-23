@@ -2,6 +2,11 @@ import 'reflect-metadata';
 import { DataSource } from 'typeorm';
 import { Post } from './app/entities/post.entity';
 import { Vote } from './app/entities/vote.entity';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
+
+const isProd = process.env.NODE_ENV === 'production';
 
 export const AppDataSource = new DataSource({
   type: 'sqlite',
@@ -10,5 +15,7 @@ export const AppDataSource = new DataSource({
   logging: false,
   entities: [Post, Vote],
   migrationsRun: false,
-  migrations: ['src/migrations/*.ts'],
+  migrations: isProd
+    ? ['dist/migrations/*.js']
+    : ['src/migrations/*.ts'],
 });
