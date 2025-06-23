@@ -2,7 +2,7 @@ import { TwitterApi } from 'twitter-api-v2';
 import { Post } from '../entities/post.entity';
 import { Repository } from 'typeorm';
 import logger from '../../utils/logger';
-import { tweetRepository, twitterClient } from '../container';
+import { postRepository, twitterClient } from '../container';
 
 export class PublishPostUseCase {
   static #instance: PublishPostUseCase;
@@ -14,14 +14,14 @@ export class PublishPostUseCase {
 
   public static get instance(): PublishPostUseCase {
     if (!PublishPostUseCase.#instance) {
-      PublishPostUseCase.#instance = new PublishPostUseCase(twitterClient, tweetRepository);
+      PublishPostUseCase.#instance = new PublishPostUseCase(twitterClient, postRepository);
     }
 
     return PublishPostUseCase.#instance;
   }
 
   async execute(postId: number): Promise<void> {
-    const post = await tweetRepository.findOne({ where: { id: postId } });
+    const post = await postRepository.findOne({ where: { id: postId } });
 
     if (!post) {
       logger.error(`Tweet with id ${postId} not found`);

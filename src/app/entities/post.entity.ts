@@ -1,6 +1,6 @@
-import {Column, Entity, ManyToOne, PrimaryGeneratedColumn} from 'typeorm';
-import {Vote} from './vote.entity';
-import {Nullable} from "../types/nullable.type";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Vote } from './vote.entity';
+import { Nullable } from '../types/nullable.type';
 
 @Entity()
 export class Post {
@@ -10,14 +10,16 @@ export class Post {
   @Column()
   text!: string;
 
-  @Column({default: false})
+  @Column({ default: false })
   posted!: boolean;
 
-  parentPostId!: Nullable<number>;
+  @Column({
+    type: 'text',
+    nullable: true,
+    default: null,
+  })
+  tweetId!: Nullable<string>;
 
-  @Column({nullable: true})
-  tweetId!: string;
-
-  @ManyToOne(() => Vote, (vote) => vote.posts, {onDelete: 'CASCADE'})
-  vote!: Vote[];
+  @ManyToOne(() => Vote, (vote) => vote.posts, { onDelete: 'CASCADE' })
+  vote!: Vote;
 }

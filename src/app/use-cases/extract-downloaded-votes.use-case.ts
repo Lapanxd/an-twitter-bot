@@ -1,20 +1,19 @@
 import fs from 'fs';
 import path from 'path';
-import {VoteType} from '../types/vote.type';
-import {Vote} from '../entities/vote.entity';
-import {Repository} from 'typeorm';
-import {voteRepository} from '../container';
+import { VoteType } from '../types/vote.type';
+import { Vote } from '../entities/vote.entity';
+import { Repository } from 'typeorm';
+import { voteRepository } from '../container';
 import logger from '../../utils/logger';
-import {parseIsoDate} from '../../utils/helpers/date-fns.helper';
-import {ProcessSteps} from '../enums/process-steps.enum';
+import { parseIsoDate } from '../../utils/helpers/date-fns.helper';
+import { ProcessSteps } from '../enums/process-steps.enum';
 
 export class ExtractDownloadedVotesUseCase {
   static #instance: ExtractDownloadedVotesUseCase;
 
   private readonly inputDir = path.resolve(process.cwd(), 'src/data/scrutins/json');
 
-  private constructor(private readonly voteRepository: Repository<Vote>) {
-  }
+  private constructor(private readonly voteRepository: Repository<Vote>) {}
 
   public static get instance(): ExtractDownloadedVotesUseCase {
     if (!ExtractDownloadedVotesUseCase.#instance) {
@@ -45,7 +44,7 @@ export class ExtractDownloadedVotesUseCase {
   private async processFile(json: VoteType): Promise<void> {
     const uid = json.scrutin.uid;
 
-    const existingVote = await this.voteRepository.findOneBy({uid});
+    const existingVote = await this.voteRepository.findOneBy({ uid });
 
     if (existingVote) {
       logger.info(`Vote with uid ${uid} already exists, skipping insert.`);

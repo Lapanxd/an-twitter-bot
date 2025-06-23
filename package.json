@@ -6,7 +6,7 @@
     "build": "tsc",
     "start": "node dist/main.js",
     "start:dev": "ts-node-dev --respawn --transpile-only --clear src/main.ts",
-    "format": "prettier --write \"src/**/*.{ts,js,json,md}\"",
+    "format": "prettier --write \"src/**/*.{ts,js,json,md,html}\"",
     "prepare": "husky install",
     "migration:generate": "ts-node --esm ./node_modules/typeorm/cli.js migration:generate -d src/data-source.ts src/migrations/migration",
     "migration:run": "ts-node --esm ./node_modules/typeorm/cli.js migration:run -d src/data-source.ts",
@@ -34,9 +34,11 @@
     "typescript": "^5.8.3"
   },
   "dependencies": {
+    "@fastify/cors": "^11.0.1",
     "axios": "^1.10.0",
     "date-fns": "^4.1.0",
     "dotenv": "^16.5.0",
+    "fastify": "^5.4.0",
     "node-cron": "^4.1.1",
     "openai": "^5.5.1",
     "reflect-metadata": "^0.2.2",

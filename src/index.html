@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Posts - Style Twitter</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-black text-gray-100 min-h-screen">
+<!-- Header -->
+<div class="border-b border-gray-800 sticky top-0 bg-black bg-opacity-80 backdrop-filter backdrop-blur-lg z-10">
+  <div class="max-w-2xl mx-auto px-4 py-4">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div
+          class="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
+          🏛️
+        </div>
+        <h1 class="text-xl font-bold text-white">Posts Politiques</h1>
+      </div>
+      <button
+        onclick="loadPosts()"
+        class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-full text-sm transition-all duration-200 flex items-center space-x-2 transform hover:scale-105"
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+        </svg>
+        <span>Actualiser</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="max-w-2xl mx-auto">
+  <!-- Loading State -->
+  <div id="loading" class="text-center py-12 text-gray-400">
+    <div class="inline-block animate-spin rounded-full h-10 w-10 border-b-2 border-blue-500 mb-4"></div>
+    <p class="text-lg">Chargement des posts...</p>
+  </div>
+
+  <!-- Error State -->
+  <div id="error"
+       class="hidden mx-4 mt-6 bg-red-900 bg-opacity-20 border border-red-500 border-opacity-50 text-red-300 p-4 rounded-xl backdrop-filter backdrop-blur-sm">
+  </div>
+
+  <!-- Posts Container -->
+  <div id="posts-container" class="divide-y divide-gray-800">
+  </div>
+</div>
+
+<script>
+  let posts = [];
+
+  async function loadPosts() {
+    const loading = document.getElementById('loading');
+    const error = document.getElementById('error');
+    const container = document.getElementById('posts-container');
+
+    loading.classList.remove('hidden');
+    error.classList.add('hidden');
+    container.innerHTML = '';
+
+    try {
+      const response = await fetch('http://localhost:3002/posts');
+
+      if (!response.ok) {
+        throw new Error(`Erreur HTTP: ${response.status}`);
+      }
+
+      posts = await response.json();
+      displayPosts(posts);
+      loading.classList.add('hidden');
+
+    } catch (err) {
+      console.error('Erreur lors du chargement des posts:', err);
+      error.textContent = `Erreur: ${err.message}. Vérifiez que votre serveur localhost:3002 est démarré.`;
+      error.classList.remove('hidden');
+      loading.classList.add('hidden');
+    }
+  }
+
+  function displayPosts(posts) {
+    const container = document.getElementById('posts-container');
+
+    if (posts.length === 0) {
+      container.innerHTML = `
+          <div class="text-center py-16 text-gray-400">
+            <div class="text-6xl mb-6">📭</div>
+            <p class="text-xl font-medium">Aucun post trouvé</p>
+            <p class="text-gray-500 mt-2">Les posts apparaîtront ici une fois chargés</p>
+          </div>
+        `;
+      return;
+    }
+
+    posts.forEach(post => {
+      const tweetElement = createTweetElement(post);
+      container.appendChild(tweetElement);
+    });
+  }
+
+  function createTweetElement(post) {
+    const tweet = document.createElement('div');
+    tweet.className = 'hover:bg-gray-900 hover:bg-opacity-50 transition-all duration-200 cursor-pointer';
+
+    const statusBadge = post.posted
+      ? '<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800 border border-green-200">✅ Publié</span>'
+      : '<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-800 border border-red-200">❌ En attente</span>';
+
+    tweet.innerHTML = `
+        <div class="px-4 py-6">
+          <div class="flex space-x-4">
+            <!-- Avatar -->
+            <div class="flex-shrink-0">
+              <div class="w-12 h-12 bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white font-bold shadow-lg ring-2 ring-gray-700">
+                🏛️
+              </div>
+            </div>
+
+            <!-- Tweet Content -->
+            <div class="flex-1 min-w-0">
+              <!-- Header -->
+              <div class="flex items-center space-x-2 mb-2">
+                <span class="font-bold text-white hover:underline cursor-pointer">Assemblée Nationale</span>
+                <svg class="w-5 h-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                </svg>
+                <span class="text-gray-400">@assemblee_fr</span>
+                <span class="text-gray-500">·</span>
+                <span class="text-gray-400 text-sm">maintenant</span>
+              </div>
+
+              <!-- Status Badge -->
+              <div class="mb-4">
+                ${statusBadge}
+              </div>
+
+              <!-- Tweet Text -->
+              <div class="text-gray-100 text-base leading-relaxed whitespace-pre-wrap mb-4 font-light">
+${post.text}
+              </div>
+
+              <!-- Tweet Actions -->
+              <div class="flex items-center justify-between max-w-md mt-4">
+                <button class="flex items-center space-x-2 text-gray-500 hover:text-blue-400 group transition-colors duration-200">
+                  <div class="w-9 h-9 rounded-full group-hover:bg-blue-500 group-hover:bg-opacity-10 flex items-center justify-center transition-all duration-200">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                    </svg>
+                  </div>
+                  <span class="text-sm font-medium">${Math.floor(Math.random() * 50) + 5}</span>
+                </button>
+
+                <button class="flex items-center space-x-2 text-gray-500 hover:text-green-400 group transition-colors duration-200">
+                  <div class="w-9 h-9 rounded-full group-hover:bg-green-400 group-hover:bg-opacity-10 flex items-center justify-center transition-all duration-200">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                    </svg>
+                  </div>
+                  <span class="text-sm font-medium">${Math.floor(Math.random() * 20) + 2}</span>
+                </button>
+
+                <button class="flex items-center space-x-2 text-gray-500 hover:text-red-400 group transition-colors duration-200">
+                  <div class="w-9 h-9 rounded-full group-hover:bg-red-400 group-hover:bg-opacity-10 flex items-center justify-center transition-all duration-200">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                    </svg>
+                  </div>
+                  <span class="text-sm font-medium">${Math.floor(Math.random() * 100) + 10}</span>
+                </button>
+
+                <button class="flex items-center space-x-2 text-gray-500 hover:text-blue-400 group transition-colors duration-200">
+                  <div class="w-9 h-9 rounded-full group-hover:bg-blue-400 group-hover:bg-opacity-10 flex items-center justify-center transition-all duration-200">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"></path>
+                    </svg>
+                  </div>
+                </button>
+              </div>
+
+              <!-- Meta Info -->
+              <div class="mt-4 pt-4 border-t border-gray-800 border-opacity-50">
+                <div class="flex items-center justify-between text-xs text-gray-500">
+                  <span class="font-mono bg-gray-800 px-2 py-1 rounded">Post #${post.id}</span>
+                  ${post.tweetId
+      ? `<span class="font-mono bg-gray-800 px-2 py-1 rounded">Tweet: ${post.tweetId}</span>`
+      : '<span class="italic text-gray-600">Non tweeté</span>'
+    }
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+
+    return tweet;
+  }
+
+  // Charger les posts au chargement de la page
+  window.addEventListener('DOMContentLoaded', loadPosts);
+</script>
+</body>
+</html>

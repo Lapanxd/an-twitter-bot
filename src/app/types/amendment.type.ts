@@ -13,4 +13,4 @@ export type Amendment = {
       exposeSommaire: string;
     };
   };
-}
+};
